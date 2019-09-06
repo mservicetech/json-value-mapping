@@ -12,3 +12,7 @@ If the conventional approach is used it is required to create lots of Java beans
 
 
 But with this intuitive library it is possible to extract relevant model data without having tons of Java beans just need the json string or an object.
+
+## library using:
+
+https://github.com/google/gson
