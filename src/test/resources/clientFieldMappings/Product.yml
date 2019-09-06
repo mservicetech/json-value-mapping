@@ -1,0 +1,35 @@
+## Product field mappings.
+Product:
+  productID:
+    type: MappingElement
+    scanPath: productID
+  resourceItemIntegrityCode:
+    type: MappingElement
+    scanPath: resourceItemIntegrityCode
+  pendingProductSubType: 
+    type: MappingElement
+    scanPath: productMapping.pendingProductSubType
+  displayProductNumber:
+    type: MappingElement
+    scanPath: productMapping.displayProductNumber
+  productMapping:
+    type: MappingObject
+    scanPath: productMapping
+  productDemographics:
+    type: MappingObject
+    scanPath: productDemographics
+    
+## ProductMapping field mappings.
+ProductMapping:
+  productRole:
+    type: MappingElement
+    scanPath: productRole
+    
+## ProductDemographics field mappings.
+ProductDemographics:
+  consetToShare:
+    type: MappingElement
+    scanPath: consetToShare
+  openedForThirdParty:
+    type: MappingElement
+    scanPath: openedForThirdParty

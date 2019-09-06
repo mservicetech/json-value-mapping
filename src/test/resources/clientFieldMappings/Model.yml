@@ -1,0 +1,46 @@
+## MyModel field mappings.
+Model:
+  type:
+    type: MappingElement
+    dependingOn: data
+    forceCustomConverter: true
+    customConverter: com.mservicetech.client.mapping.TypeCustomConverter
+  volume:
+    type: MappingElement
+    scanPath: f1
+  openDate:
+    type: MappingElement
+    scanPath: openDate
+  age: 
+    type: MappingElement
+    scanPath: age,data.age
+  data:
+    type: MappingObject
+    scanPath: data
+  users:
+    type: MappingCollection
+    scanPath: f4
+  strList:
+    type: MappingCollection
+    scanPath: strList
+  intList:
+    type: MappingCollection
+    scanPath: intList
+  info:
+    type: MappingCollection
+    scanPath: dataInfo.info
+    
+## Data field mappings.
+Data:
+  age:
+    type: MappingElement
+    scanPath: age
+
+## User field mappings.
+User:
+  name:
+    type: MappingElement
+    scanPath: name
+  id:
+    type: MappingElement
+    scanPath: id
