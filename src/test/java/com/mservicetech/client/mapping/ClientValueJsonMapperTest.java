@@ -7,7 +7,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ClientValueJsonMapperTest {
-	private ClientJsonMapper arkJsonMapper = new ClientJsonMapper();
+	private ClientJsonMapper mappingJsonMapper = new ClientJsonMapperImpl();
 	private final static String json = "{" +
             "    \"f1\" : \"volume\"," +
             "    \"f2\" : \"gender\"," +
@@ -39,14 +39,14 @@ public class ClientValueJsonMapperTest {
 	
 	@Test
 	public void fromStringTest() throws Exception {
-		MyModel value = (MyModel) arkJsonMapper.fromString(json, MyModel.class, null);
+		MyModel value = (MyModel) mappingJsonMapper.fromString(json, MyModel.class, null);
 	    assertEquals(value.getAge(), 30);
 	    assertTrue(value.getIntArray().length != 0);
 	    assertTrue(value.getUserArray().length != 0);
 	    assertTrue(value.getInfo().size() != 0);
 	    assertTrue(value.getType() == Type.Data);
 	    
-	    Data data = (Data) arkJsonMapper.fromString(json, Data.class, "dataInfo.info.data");
+	    Data data = (Data) mappingJsonMapper.fromString(json, Data.class, "dataInfo.info.data");
 	    assertEquals(data.getAge(), 30);
 	}
 	
@@ -55,20 +55,20 @@ public class ClientValueJsonMapperTest {
 		final JsonParser parser = new JsonParser();
 		final JsonObject root = (JsonObject) parser.parse(json);
 		
-		MyModel value = (MyModel) arkJsonMapper.fromJsonObject(root, MyModel.class, null);
+		MyModel value = (MyModel) mappingJsonMapper.fromJsonObject(root, MyModel.class, null);
 	    assertEquals(value.getAge(), 30);
 	    assertTrue(value.getIntArray().length != 0);
 	    assertTrue(value.getUserArray().length != 0);
 	    assertTrue(value.getInfo().size() != 0);
 	    
-	    Data data = (Data) arkJsonMapper.fromJsonObject(root, Data.class, "dataInfo.info.data");
+	    Data data = (Data) mappingJsonMapper.fromJsonObject(root, Data.class, "dataInfo.info.data");
 	    assertEquals(data.getAge(), 30);
 	}
 
 	@Test
 	public void fromStringErrorTest() throws Exception {
 		try {
-			arkJsonMapper.fromString(json, Data.class, "dataInfo.info1");
+			mappingJsonMapper.fromString(json, Data.class, "dataInfo.info1");
 			fail();
 		} catch (MappingException e) {
 
@@ -81,7 +81,7 @@ public class ClientValueJsonMapperTest {
 		try {
 			final JsonParser parser = new JsonParser();
 			final JsonObject root = (JsonObject) parser.parse(json);
-			arkJsonMapper.fromJsonObject(root, Data.class, "dataInfo.info1");
+			mappingJsonMapper.fromJsonObject(root, Data.class, "dataInfo.info1");
 			fail();
 		} catch (MappingException e) {
 			assertNotNull(e);
