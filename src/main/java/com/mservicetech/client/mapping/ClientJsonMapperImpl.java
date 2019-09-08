@@ -17,10 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -139,7 +136,6 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 		try {
 			if (rootPath != null) {
 				final String[] pathElements = rootPath.split("\\.");
-				
 				for (int i = 0; i < pathElements.length; i++) {
 					root = root.getAsJsonObject(pathElements[i]);
 					if (root == null || root.isJsonNull()) {
@@ -161,16 +157,16 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 	}
 
 	@Override
-	public List<?> listFromString(final String json, final Class<?> clazz, final String rootPath) {
-		List<?> list;
+	public  <T> List<T> listFromString(final String json, final Class<T> clazz, final String rootPath) {
+		List<T> list;
 		final Object root = parser.parse(json);
 		list = listFromJsonObject(root, clazz, rootPath);
 		return list;
 	}
 
 	@Override
-	public List<?> listFromJsonObject(Object rootObject, final Class<?> clazz, final String rootPath) {
-		List<Object> list;
+	public  <T> List<T>listFromJsonObject(Object rootObject, final Class<T> clazz, final String rootPath) {
+		List<T> list;
 		JsonArray array = null;
 		if (rootPath != null) {
 			final String[] pathElements = rootPath.split("\\.");
@@ -193,7 +189,7 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 		}
 
 		list = new ArrayList<>();
-		Object object;
+		T object;
 		for (JsonElement element : array) {
 			if (!fieldMappings.isEmpty()) {
 				object = mapUsingFiles(element.getAsJsonObject(), clazz);

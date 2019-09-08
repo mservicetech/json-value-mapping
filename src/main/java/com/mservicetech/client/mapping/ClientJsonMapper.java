@@ -48,7 +48,7 @@ public interface ClientJsonMapper {
      * @param rootPath - Path element to check. This is null when start from the root.
      * @return Instance with values.
      */
-    List<?> listFromString(final String json, final Class<?> clazz, final String rootPath);
+    <T> List<T>  listFromString(final String json, final Class<T> clazz, final String rootPath);
 
     /**
      * Create a List of Class instances with values extracted from a JsonObject.
@@ -58,7 +58,7 @@ public interface ClientJsonMapper {
      * @param rootPath - Path element to check. This is null when start from the root.
      * @return Instance with values.
      */
-    List<?> listFromJsonObject(Object rootObject, final Class<?> clazz, final String rootPath);
+    <T> List<T> listFromJsonObject(Object rootObject, final Class<T> clazz, final String rootPath);
 
     /**
      * Clear all field mappings.
