@@ -2,6 +2,7 @@ package com.mservicetech.client.mapping;
 
 import com.google.gson.JsonObject;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -66,4 +67,24 @@ public interface ClientJsonMapper {
      */
     void clearMappingFiles();
 
+    /**
+     * check if the class is mapping avialble class with annotation .
+     *
+     */
+    boolean checkIfSerializable(final Class<?> clazz);
+
+    /**
+     * Register the customer type adapter  for the object type
+     *
+     * @param type - type the object.
+     * @param typeAdapter - adapter object.
+     * @return builder itself.
+     */
+    ClientJsonMapper registerTypeAdapter(Type type, Object typeAdapter);
+
+    /**
+     * builder return
+     * @return builder itself.
+     */
+    ClientJsonMapper builder();
 }

@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,6 +25,7 @@ import java.util.stream.Stream;
 
 public class ClientJsonMapperImpl implements ClientJsonMapper {
 	private static final String PATH_CONTAINS_NULL_ELEMENTS = "The scan path contains null elements unable to map.";
+	private GsonBuilder gsonBuilder;
 	private Gson GSON = null;
 	private JsonParser parser = null;
 	
@@ -58,17 +60,21 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 	private void init() {
 		fieldMappings = new HashMap<>();
 		parser = new JsonParser();
-		
-		GSON = new GsonBuilder()
-        .setPrettyPrinting()
-        .registerTypeAdapter(LocalDate.class, new LocalDateAdapter().nullSafe())
-		.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter().nullSafe())
-        .create();
-	}
-	
+		gsonBuilder  = new GsonBuilder()
+				.setPrettyPrinting()
+				.registerTypeAdapter(LocalDate.class, new LocalDateAdapter().nullSafe())
+				.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter().nullSafe());
 
-	
-    @Override
+	}
+
+	@Override
+	public ClientJsonMapper registerTypeAdapter(Type type, Object typeAdapter) {
+		gsonBuilder.registerTypeAdapter(type, typeAdapter);
+		return this;
+	}
+
+
+	@Override
 	public void clearMappingFiles() {
 		fieldMappings.clear();
 	}
@@ -104,7 +110,6 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 
 	@Override
 	public <T> T  fromString(final String json, final Class<T> clazz, final String rootPath){
-		Object object;
 		try {
 			JsonObject root = (JsonObject) parser.parse(json);
 			
@@ -127,12 +132,10 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 		} catch (Exception e) {
 			throw new MappingException("MappingError: ", e);
 		}
-	//	return object;
 	}
 
 	@Override
 	public <T> T fromJsonObject(JsonObject root, final Class<T> clazz, final String rootPath){
-		T object;
 		try {
 			if (rootPath != null) {
 				final String[] pathElements = rootPath.split("\\.");
@@ -145,19 +148,19 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 			}
 			
 			if (!fieldMappings.isEmpty()) {
-				object = mapUsingFiles(root, clazz);
+				return  mapUsingFiles(root, clazz);
 			} else {
-				object = mapUsingAnnotations(root, clazz);
+				return  mapUsingAnnotations(root, clazz);
 			}
 		} catch (Exception e) {
 			throw new MappingException("MappingError: ", e);
 		}
-		
-		return object;
+
 	}
 
 	@Override
 	public  <T> List<T> listFromString(final String json, final Class<T> clazz, final String rootPath) {
+
 		List<T> list;
 		final Object root = parser.parse(json);
 		list = listFromJsonObject(root, clazz, rootPath);
@@ -217,7 +220,7 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 				return extractValue(currentRoot, pathElements[i+1], type);
 			}
 		}
-		
+		if (GSON==null) GSON = this.gsonBuilder.create();
 		return GSON.fromJson(jsonElement, type);
 	}
 	
@@ -233,32 +236,24 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 		 T object;
 		try {
 			object = clazz.newInstance();
-			String path;
-			Map<String, String> fieldMap ;
-			CustomConverter customConverter ;
-			Class<?> instance ;
-			Object value ;
-			String customConverterPath;
 			for (Field field : clazz.getDeclaredFields()) {
 		        field.setAccessible(true);
-		        customConverter = null;
-		        value = null;
-		        fieldMap = fieldMappings.get(clazz.getSimpleName()).get(field.getName());
+				CustomConverter customConverter = null;
+				Object value = null;
+				Map<String, String> fieldMap = fieldMappings.get(clazz.getSimpleName()).get(field.getName());
 		        if (fieldMap == null) {
 		        	continue;
 		        }
-		        
-		        path = fieldMap.get("scanPath");
+
+				String path = fieldMap.get("scanPath");
 	        	if (path == null || path.isEmpty()) {
 	        		path = field.getName();
 	        	}
-	        	
-	        	customConverterPath = fieldMap.get("customConverter");
+				String  customConverterPath = fieldMap.get("customConverter");
 	        	if (customConverterPath != null) {
-					instance = Class.forName(customConverterPath);
+					Class<?>  instance = Class.forName(customConverterPath);
 	        		customConverter = (CustomConverter) instance.newInstance();
 	        	}
-	        	
 	        	
 	        	if (!Boolean.valueOf(String.valueOf(fieldMap.get("forceCustomConverter")))) {
 			        switch (fieldMap.get("type")) {
@@ -275,7 +270,7 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 			        		value = mapUsingFiles(root.getAsJsonObject(path), field.getType());
 			        		break;
 			        	case "MappingCollection":
-			        		Class<?> listClass = null;
+			        		Class<?> listClass;
 				        	if (field.getType().isArray()) {
 				        		listClass = field.getType().getComponentType();
 				        		value = createArray(root, path, listClass, "mapUsingFiles");
@@ -312,8 +307,9 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 	 * @return Instance with values.
 	 */
 	private <T> T mapUsingAnnotations(final JsonObject root, final Class<T> clazz){
-		checkIfSerializable(clazz);
-		
+		if (!checkIfSerializable(clazz) ) {
+			throw new MappingException("The class " + clazz.getSimpleName() + " is not annotated with MappingSerializable");
+		}
 		T object;
 		try {
 			object = clazz.newInstance();
@@ -323,13 +319,13 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 			String path = null;
 			CustomConverter customConverter;
 			Class<?> instantation;
-			Object value;
+		//	Object value;
 			for (Field field : clazz.getDeclaredFields()) {
 		        field.setAccessible(true);
-		        value = null;
+				Object value = null;
 		        if (field.isAnnotationPresent(MappingElement.class)) {
 		        	mappingElement = field.getAnnotation(MappingElement.class);
-		        	
+
 		        	path = mappingElement.scanPath();
 		        	if (mappingElement.scanPath().isEmpty()) {
 		        		path = field.getName();
@@ -408,13 +404,13 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 	private <T> T[] createArray(final JsonObject root, final String path, final Class<T> listClass, final String method) {
 		final JsonArray jsonArray = getArrayElement(root, path);
 		final T[] array = (T[]) Array.newInstance(listClass, jsonArray.size());
-				
+		if (GSON==null) GSON = this.gsonBuilder.create();
 		for (int i = 0; i < jsonArray.size(); ++i) {
 			try {
 				if (jsonArray.get(i) instanceof JsonPrimitive) {
 					array[i] = GSON.fromJson(jsonArray.get(i), listClass);;
 				} else {
-					Object element = null;
+					Object element;
 					if (method.equals("mapUsingAnnotations")) {
 						element = mapUsingAnnotations((JsonObject) jsonArray.get(i), listClass);
 					} else {
@@ -430,9 +426,9 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 		return array;
 	}
 	
-	private List<Object> createList(final JsonObject root, final String path, final Class<?> listClass, final String method) throws MappingException{
-		List<Object> list = null;
-		
+	private <T> List<T> createList(final JsonObject root, final String path, final Class<T> listClass, final String method) throws MappingException{
+		List<T> list = null;
+		if (GSON==null) GSON = this.gsonBuilder.create();
 		final JsonArray array = getArrayElement(root, path);
 		if (array != null) {
 			list = new ArrayList<>();
@@ -441,7 +437,7 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 					if (dt instanceof JsonPrimitive) {
 						list.add(GSON.fromJson(dt, listClass));
 					} else {
-						Object listElement = null;
+						T listElement ;
 						if (method.equals("mapUsingAnnotations")) {
 							listElement = mapUsingAnnotations(dt.getAsJsonObject(), listClass);
 						} else {
@@ -460,7 +456,7 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 	@SuppressWarnings("unchecked")
 	private Map<Object, Object> createMap(JsonObject root, final String path, final ParameterizedType type, final String method){
 		final Map<Object, Object> map = new HashMap<>();
-		
+		if (GSON==null) GSON = this.gsonBuilder.create();
 		root = getElement(root, path);
 		map.putAll( GSON.fromJson(root, type));
 		
@@ -502,13 +498,18 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 		
 		return currentRoot;
 	}
-	
-	private void checkIfSerializable(final Class<?> clazz) {
-	    if (!clazz.isAnnotationPresent(MappingSerializable.class)) {
-	        throw new MappingException("The class "
-	          + clazz.getSimpleName() 
-	          + " is not annotated with MappingSerializable");
-	    }
+
+	@Override
+	public  boolean checkIfSerializable(final Class<?> clazz) {
+		if (clazz.isAnnotationPresent(MappingSerializable.class)) {
+			return true;
+		}
+		return false;
 	}
 
+	@Override
+	public ClientJsonMapper builder() {
+		this.GSON = gsonBuilder.create();
+		return this;
+	}
 }
