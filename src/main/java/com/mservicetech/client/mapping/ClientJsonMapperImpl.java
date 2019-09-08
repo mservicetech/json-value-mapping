@@ -24,11 +24,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * Mapper to automatically extract details from a json.
- * Field mapping can be annotation based on config file based.
- *
- */
+
 public class ClientJsonMapperImpl implements ClientJsonMapper {
 	private static final String PATH_CONTAINS_NULL_ELEMENTS = "The scan path contains null elements unable to map.";
 	private Gson GSON = null;
@@ -110,7 +106,7 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 	}
 
 	@Override
-	public Object fromString(final String json, final Class<?> clazz, final String rootPath){
+	public <T> T  fromString(final String json, final Class<T> clazz, final String rootPath){
 		Object object;
 		try {
 			JsonObject root = (JsonObject) parser.parse(json);
@@ -126,20 +122,20 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 				}
 			}
 			if (!fieldMappings.isEmpty()) {
-				object = mapUsingFiles(root, clazz);
+			  return mapUsingFiles(root, clazz);
 			} else {
-				object = mapUsingAnnotations(root, clazz);
+				return  mapUsingAnnotations(root, clazz);
 			}
 
 		} catch (Exception e) {
 			throw new MappingException("MappingError: ", e);
 		}
-		return object;
+	//	return object;
 	}
 
 	@Override
-	public Object fromJsonObject(JsonObject root, final Class<?> clazz, final String rootPath){
-		Object object;
+	public <T> T fromJsonObject(JsonObject root, final Class<T> clazz, final String rootPath){
+		T object;
 		try {
 			if (rootPath != null) {
 				final String[] pathElements = rootPath.split("\\.");
@@ -165,15 +161,15 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 	}
 
 	@Override
-	public List<Object> listFromString(final String json, final Class<?> clazz, final String rootPath) {
-		List<Object> list;
+	public List<?> listFromString(final String json, final Class<?> clazz, final String rootPath) {
+		List<?> list;
 		final Object root = parser.parse(json);
 		list = listFromJsonObject(root, clazz, rootPath);
 		return list;
 	}
 
 	@Override
-	public List<Object> listFromJsonObject(Object rootObject, final Class<?> clazz, final String rootPath) {
+	public List<?> listFromJsonObject(Object rootObject, final Class<?> clazz, final String rootPath) {
 		List<Object> list;
 		JsonArray array = null;
 		if (rootPath != null) {
@@ -197,7 +193,7 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 		}
 
 		list = new ArrayList<>();
-		Object object = null;
+		Object object;
 		for (JsonElement element : array) {
 			if (!fieldMappings.isEmpty()) {
 				object = mapUsingFiles(element.getAsJsonObject(), clazz);
@@ -210,7 +206,7 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 		return list;
 	}
 	
-	private Object extractValue(final JsonObject root, final String path, final Class<?> type) {
+	private  <T> T extractValue(final JsonObject root, final String path, final Class<T> type) {
 		final String[] pathElements = path.split("\\.");
 		
 		JsonObject currentRoot = root;
@@ -237,14 +233,14 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 	 * @param clazz - Type to set the values.
 	 * @return Instance with values.
 	 */
-	private Object mapUsingFiles(final JsonObject root, final Class<?> clazz) {
-		Object object;
+	private <T> T mapUsingFiles(final JsonObject root, final Class<T> clazz) {
+		 T object;
 		try {
 			object = clazz.newInstance();
 			String path;
 			Map<String, String> fieldMap ;
 			CustomConverter customConverter ;
-			Class<?> instantation ;
+			Class<?> instance ;
 			Object value ;
 			String customConverterPath;
 			for (Field field : clazz.getDeclaredFields()) {
@@ -263,8 +259,8 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 	        	
 	        	customConverterPath = fieldMap.get("customConverter");
 	        	if (customConverterPath != null) {
-	        		instantation = Class.forName(customConverterPath);
-	        		customConverter = (CustomConverter) instantation.newInstance();
+					instance = Class.forName(customConverterPath);
+	        		customConverter = (CustomConverter) instance.newInstance();
 	        	}
 	        	
 	        	
@@ -319,10 +315,10 @@ public class ClientJsonMapperImpl implements ClientJsonMapper {
 	 * @param clazz - Type to set the values.
 	 * @return Instance with values.
 	 */
-	private Object mapUsingAnnotations(final JsonObject root, final Class<?> clazz){
+	private <T> T mapUsingAnnotations(final JsonObject root, final Class<T> clazz){
 		checkIfSerializable(clazz);
 		
-		Object object;
+		T object;
 		try {
 			object = clazz.newInstance();
 			MappingElement mappingElement;

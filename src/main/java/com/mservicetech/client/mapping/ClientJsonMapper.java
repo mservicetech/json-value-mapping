@@ -4,6 +4,11 @@ import com.google.gson.JsonObject;
 
 import java.util.List;
 
+/**
+ * Mapper to automatically extract details from a json.
+ * Field mapping can be annotation based on config file based.
+ *
+ */
 public interface ClientJsonMapper {
 
     /**
@@ -22,7 +27,7 @@ public interface ClientJsonMapper {
      * @param rootPath - Path element to check. This is null when start from the root.
      * @return Instance with values.
      */
-    Object fromString(final String json, final Class<?> clazz, final String rootPath);
+    <T> T fromString(final String json, final Class<T> clazz, final String rootPath);
 
     /**
      * Create a Class instance with values extracted from a JsonObject.
@@ -32,7 +37,7 @@ public interface ClientJsonMapper {
      * @param rootPath - Path element to check. This is null when start from the root.
      * @return Instance with values.
      */
-    Object fromJsonObject(JsonObject root, final Class<?> clazz, final String rootPath);
+    <T> T fromJsonObject(JsonObject root, final Class<T> clazz, final String rootPath);
 
 
     /**
@@ -43,7 +48,7 @@ public interface ClientJsonMapper {
      * @param rootPath - Path element to check. This is null when start from the root.
      * @return Instance with values.
      */
-    List<Object> listFromString(final String json, final Class<?> clazz, final String rootPath);
+    List<?> listFromString(final String json, final Class<?> clazz, final String rootPath);
 
     /**
      * Create a List of Class instances with values extracted from a JsonObject.
@@ -53,7 +58,7 @@ public interface ClientJsonMapper {
      * @param rootPath - Path element to check. This is null when start from the root.
      * @return Instance with values.
      */
-    List<Object> listFromJsonObject(Object rootObject, final Class<?> clazz, final String rootPath);
+    List<?> listFromJsonObject(Object rootObject, final Class<?> clazz, final String rootPath);
 
     /**
      * Clear all field mappings.

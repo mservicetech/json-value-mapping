@@ -82,7 +82,7 @@ public class ClientJsonMapperMappingFilesTest {
 
 	@Test
 	public void listFromStringTest() throws Exception {
-		List<Object> users =  clientJsonMapperImpl.listFromString(json, User.class, "f4");
+		List<?> users =  clientJsonMapperImpl.listFromString(json, User.class, "f4");
 	    assertTrue(users.size() > 0);
 	    
 	    users = clientJsonMapperImpl.listFromString(usersJson, User.class, null);
