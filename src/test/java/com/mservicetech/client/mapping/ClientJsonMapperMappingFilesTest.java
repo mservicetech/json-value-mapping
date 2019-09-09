@@ -9,7 +9,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class ClientJsonMapperMappingFilesTest {
-	private ClientJsonMapper clientJsonMapperImpl = new ClientJsonMapperImpl("src/test/resources/clientFieldMappings");
+	private ClientJsonMapper clientJsonMapperImpl = new ConfigBaseMapperImpl("src/test/resources/clientFieldMappings");
 	private final static String json = "{" +
             "    \"f1\" : \"volume\"," +
             "    \"f2\" : \"gender\"," +
@@ -82,7 +82,7 @@ public class ClientJsonMapperMappingFilesTest {
 
 	@Test
 	public void listFromStringTest() throws Exception {
-		List<Object> users =  clientJsonMapperImpl.listFromString(json, User.class, "f4");
+		List<?> users =  clientJsonMapperImpl.listFromString(json, User.class, "f4");
 	    assertTrue(users.size() > 0);
 	    
 	    users = clientJsonMapperImpl.listFromString(usersJson, User.class, null);
@@ -92,7 +92,7 @@ public class ClientJsonMapperMappingFilesTest {
 	@Test
 	public void loadMappingFilesError() throws Exception {
 		try {
-			final ClientJsonMapperImpl clientJsonMapperImpl = new ClientJsonMapperImpl("src/test/resources/clientFieldMappingsError");
+			final ClientJsonMapper clientJsonMapperImpl = new ConfigBaseMapperImpl("src/test/resources/clientFieldMappingsError");
 			fail();
 		} catch (MappingException e) {
 			assertNotNull(e);

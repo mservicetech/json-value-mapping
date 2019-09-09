@@ -3,8 +3,10 @@
 
 ## Introduction:
 
-IN microservice application, the application will be split into a set of smaller, interconnected services instead of building a single monolithic application.
+In microservice application, the application will be split into a set of smaller, interconnected services instead of building a single monolithic application.
+
 Each microservice is a small application that has its own hexagonal architecture consisting of business logic along with various adapters.
+
 So there will be lots service to service call to get the required data for business method.
 
 In normal scenario, the restful API use json format for response.  In case system has lots of downstream call, then tons of fields are to be extracted from various json responses.

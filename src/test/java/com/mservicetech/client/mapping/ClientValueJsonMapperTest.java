@@ -7,7 +7,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ClientValueJsonMapperTest {
-	private ClientJsonMapper mappingJsonMapper = new ClientJsonMapperImpl();
+	private ClientJsonMapper mappingJsonMapper = new AnnotationBaseMapperImpl();
 	private final static String json = "{" +
             "    \"f1\" : \"volume\"," +
             "    \"f2\" : \"gender\"," +
