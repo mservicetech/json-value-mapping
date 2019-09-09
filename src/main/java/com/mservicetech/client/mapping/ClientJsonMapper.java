@@ -68,10 +68,10 @@ public interface ClientJsonMapper {
     void clearMappingFiles();
 
     /**
-     * check if the class is mapping avialble class with annotation .
+     * check if the class is mapping available class with annotation .
      *
      */
-    boolean checkIfSerializable(final Class<?> clazz);
+    boolean isSerializable(final Class<?> clazz);
 
     /**
      * Register the customer type adapter  for the object type
@@ -87,4 +87,6 @@ public interface ClientJsonMapper {
      * @return builder itself.
      */
     ClientJsonMapper builder();
+
+
 }
