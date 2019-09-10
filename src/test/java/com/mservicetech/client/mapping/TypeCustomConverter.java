@@ -2,6 +2,7 @@ package com.mservicetech.client.mapping;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mservicetech.client.mapping.annotation.MappingSerializable;
 
 import java.lang.reflect.Field;
 

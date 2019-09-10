@@ -59,29 +59,29 @@ public class ClientJsonMapperMappingFilesTest {
         "    ]";
         
 	@Test
-	public void mappingFilesTest() throws Exception {
-		Model value = (Model) clientJsonMapperImpl.fromString(json, Model.class, null);
+	public void mappingFilesTest()  {
+		Model value =  clientJsonMapperImpl.fromString(json, Model.class, null);
 	    assertEquals(value.getAge(), 30);
 	    assertTrue(value.getType() == Type.Data);
 	    assertTrue(value.getInfo().size() > 0);
 	}
 
 	@Test
-	public void fromJsonObjectTest() throws Exception {
+	public void fromJsonObjectTest()  {
 		final JsonParser parser = new JsonParser();
 		final JsonObject root = (JsonObject) parser.parse(json);
 
-		Model value = (Model) clientJsonMapperImpl.fromJsonObject(root, Model.class, null);
+		Model value =  clientJsonMapperImpl.fromJsonObject(root, Model.class, null);
 	    assertEquals(value.getAge(), 30);
 	    assertTrue(value.getUsers().size() != 0);
 	    assertTrue(value.getIntList().size() != 0);
 
-	    Data data = (Data) clientJsonMapperImpl.fromJsonObject(root, Data.class, "dataInfo.info.data");
+	    Data data =  clientJsonMapperImpl.fromJsonObject(root, Data.class, "dataInfo.info.data");
 	    assertEquals(data.getAge(), 30);
 	}
 
 	@Test
-	public void listFromStringTest() throws Exception {
+	public void listFromStringTest()  {
 		List<?> users =  clientJsonMapperImpl.listFromString(json, User.class, "f4");
 	    assertTrue(users.size() > 0);
 	    
@@ -90,7 +90,7 @@ public class ClientJsonMapperMappingFilesTest {
 	}
 	
 	@Test
-	public void loadMappingFilesError() throws Exception {
+	public void loadMappingFilesError()  {
 		try {
 			final ClientJsonMapper clientJsonMapperImpl = new ConfigBaseMapperImpl("src/test/resources/clientFieldMappingsError");
 			fail();

@@ -1,29 +1,16 @@
 package com.mservicetech.client.mapping;
 
 import com.google.gson.*;
-import com.mservicetech.client.mapping.adapter.LocalDateAdapter;
-import com.mservicetech.client.mapping.adapter.LocalDateTimeAdapter;
-import org.yaml.snakeyaml.Yaml;
+import com.mservicetech.client.mapping.annotation.MappingCollection;
+import com.mservicetech.client.mapping.annotation.MappingElement;
+import com.mservicetech.client.mapping.annotation.MappingObject;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Array;
+
+
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 public class AnnotationBaseMapperImpl extends  BaseMapperImpl implements ClientJsonMapper {
@@ -53,9 +40,9 @@ public class AnnotationBaseMapperImpl extends  BaseMapperImpl implements ClientJ
 			MappingElement mappingElement;
 			MappingObject mappingObject;
 			MappingCollection mappingCollection;
-			String path = null;
+			String path ;
 			CustomConverter customConverter;
-			Class<?> instantation;
+			Class<?> instance;
 		//	Object value;
 			for (Field field : clazz.getDeclaredFields()) {
 		        field.setAccessible(true);
@@ -78,8 +65,8 @@ public class AnnotationBaseMapperImpl extends  BaseMapperImpl implements ClientJ
 		        		}
 		        	}
 		        	if (!mappingElement.customConverter().isEmpty()) {
-		        		instantation = Class.forName(mappingElement.customConverter());
-		        		customConverter = (CustomConverter) instantation.newInstance();
+						instance = Class.forName(mappingElement.customConverter());
+		        		customConverter = (CustomConverter) instance.newInstance();
 		        		
 		        		value = customConverter.convert(root, field, path, mappingElement.dependingOn(), value, object);
 		        	}
@@ -95,8 +82,8 @@ public class AnnotationBaseMapperImpl extends  BaseMapperImpl implements ClientJ
 		        		value = mapResult(root.getAsJsonObject(path), field.getType());
 		        	}
 		        	if (!mappingObject.customConverter().isEmpty()) {
-		        		instantation = Class.forName(mappingObject.customConverter());
-		        		customConverter = (CustomConverter) instantation.newInstance();
+						instance = Class.forName(mappingObject.customConverter());
+		        		customConverter = (CustomConverter) instance.newInstance();
 		        		value = customConverter.convert(root, field, path, mappingObject.dependingOn(), value, object);
 		        	}
 		        } else if (field.isAnnotationPresent(MappingCollection.class)) {
@@ -123,8 +110,8 @@ public class AnnotationBaseMapperImpl extends  BaseMapperImpl implements ClientJ
 		        	}
 		            
 		        	if (!mappingCollection.customConverter().isEmpty()) {
-		        		instantation = Class.forName(mappingCollection.customConverter());
-		        		customConverter = (CustomConverter) instantation.newInstance();
+						instance = Class.forName(mappingCollection.customConverter());
+		        		customConverter = (CustomConverter) instance.newInstance();
 		        		value = customConverter.convert(root, field, path, mappingCollection.dependingOn(), value, object);
 		        	}
 		        }

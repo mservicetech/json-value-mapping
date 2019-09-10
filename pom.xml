@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.mservicetech.client.mapping</groupId>
-    <artifactId>client-json-value</artifactId>
+    <artifactId>client-json-mapping</artifactId>
     <version>1.00</version>
 
     <distributionManagement>

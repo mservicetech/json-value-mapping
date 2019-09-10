@@ -1,6 +1,7 @@
 package com.mservicetech.client.mapping;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mservicetech.client.mapping.annotation.MappingSerializable;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -3,6 +3,7 @@ package com.mservicetech.client.mapping;
 import com.google.gson.*;
 import com.mservicetech.client.mapping.adapter.LocalDateAdapter;
 import com.mservicetech.client.mapping.adapter.LocalDateTimeAdapter;
+import com.mservicetech.client.mapping.annotation.MappingSerializable;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
