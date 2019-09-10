@@ -1,5 +1,8 @@
 package com.mservicetech.client.mapping;
 
+import com.mservicetech.client.mapping.annotation.MappingElement;
+import com.mservicetech.client.mapping.annotation.MappingSerializable;
+
 @MappingSerializable
 public class Data {
 

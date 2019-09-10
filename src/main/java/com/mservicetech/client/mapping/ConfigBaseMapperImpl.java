@@ -58,7 +58,7 @@ public class ConfigBaseMapperImpl extends  BaseMapperImpl implements ClientJsonM
 		try {
 			if (serializableFieldsMappings != null && !serializableFieldsMappings.isEmpty()) {
 				final Yaml yaml = new Yaml();
-				Map<String, Map<String, Map<String, String>>> mappings = null;
+				Map<String, Map<String, Map<String, String>>> mappings;
 				for (String path : serializableFieldsMappings) {
 					resourceAsStream = new FileInputStream(path);
 					mappings = yaml.load(resourceAsStream);

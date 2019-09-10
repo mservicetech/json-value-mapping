@@ -1,4 +1,4 @@
-package com.mservicetech.client.mapping;
+package com.mservicetech.client.mapping.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

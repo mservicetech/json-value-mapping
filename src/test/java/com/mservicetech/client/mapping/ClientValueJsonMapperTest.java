@@ -38,8 +38,8 @@ public class ClientValueJsonMapperTest {
             "}";
 	
 	@Test
-	public void fromStringTest() throws Exception {
-		MyModel value = (MyModel) mappingJsonMapper.fromString(json, MyModel.class, null);
+	public void fromStringTest(){
+		MyModel value =  mappingJsonMapper.fromString(json, MyModel.class, null);
 	    assertEquals(value.getAge(), 30);
 	    assertTrue(value.getIntArray().length != 0);
 	    assertTrue(value.getUserArray().length != 0);
@@ -51,22 +51,22 @@ public class ClientValueJsonMapperTest {
 	}
 	
 	@Test
-	public void fromJsonObjectTest() throws Exception {
+	public void fromJsonObjectTest()  {
 		final JsonParser parser = new JsonParser();
 		final JsonObject root = (JsonObject) parser.parse(json);
 		
-		MyModel value = (MyModel) mappingJsonMapper.fromJsonObject(root, MyModel.class, null);
+		MyModel value =  mappingJsonMapper.fromJsonObject(root, MyModel.class, null);
 	    assertEquals(value.getAge(), 30);
 	    assertTrue(value.getIntArray().length != 0);
 	    assertTrue(value.getUserArray().length != 0);
 	    assertTrue(value.getInfo().size() != 0);
 	    
-	    Data data = (Data) mappingJsonMapper.fromJsonObject(root, Data.class, "dataInfo.info.data");
+	    Data data =  mappingJsonMapper.fromJsonObject(root, Data.class, "dataInfo.info.data");
 	    assertEquals(data.getAge(), 30);
 	}
 
 	@Test
-	public void fromStringErrorTest() throws Exception {
+	public void fromStringErrorTest()  {
 		try {
 			mappingJsonMapper.fromString(json, Data.class, "dataInfo.info1");
 			fail();
@@ -77,7 +77,7 @@ public class ClientValueJsonMapperTest {
 	}
 	
 	@Test
-	public void fromJsonObjectErrorTest() throws Exception {
+	public void fromJsonObjectErrorTest()  {
 		try {
 			final JsonParser parser = new JsonParser();
 			final JsonObject root = (JsonObject) parser.parse(json);
