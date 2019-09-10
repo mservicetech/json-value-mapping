@@ -53,9 +53,9 @@ public class AnnotationBaseMapperImpl extends  BaseMapperImpl implements ClientJ
 			MappingElement mappingElement;
 			MappingObject mappingObject;
 			MappingCollection mappingCollection;
-			String path = null;
+			String path ;
 			CustomConverter customConverter;
-			Class<?> instantation;
+			Class<?> instance;
 		//	Object value;
 			for (Field field : clazz.getDeclaredFields()) {
 		        field.setAccessible(true);
@@ -78,8 +78,8 @@ public class AnnotationBaseMapperImpl extends  BaseMapperImpl implements ClientJ
 		        		}
 		        	}
 		        	if (!mappingElement.customConverter().isEmpty()) {
-		        		instantation = Class.forName(mappingElement.customConverter());
-		        		customConverter = (CustomConverter) instantation.newInstance();
+						instance = Class.forName(mappingElement.customConverter());
+		        		customConverter = (CustomConverter) instance.newInstance();
 		        		
 		        		value = customConverter.convert(root, field, path, mappingElement.dependingOn(), value, object);
 		        	}
@@ -95,8 +95,8 @@ public class AnnotationBaseMapperImpl extends  BaseMapperImpl implements ClientJ
 		        		value = mapResult(root.getAsJsonObject(path), field.getType());
 		        	}
 		        	if (!mappingObject.customConverter().isEmpty()) {
-		        		instantation = Class.forName(mappingObject.customConverter());
-		        		customConverter = (CustomConverter) instantation.newInstance();
+						instance = Class.forName(mappingObject.customConverter());
+		        		customConverter = (CustomConverter) instance.newInstance();
 		        		value = customConverter.convert(root, field, path, mappingObject.dependingOn(), value, object);
 		        	}
 		        } else if (field.isAnnotationPresent(MappingCollection.class)) {
@@ -123,8 +123,8 @@ public class AnnotationBaseMapperImpl extends  BaseMapperImpl implements ClientJ
 		        	}
 		            
 		        	if (!mappingCollection.customConverter().isEmpty()) {
-		        		instantation = Class.forName(mappingCollection.customConverter());
-		        		customConverter = (CustomConverter) instantation.newInstance();
+						instance = Class.forName(mappingCollection.customConverter());
+		        		customConverter = (CustomConverter) instance.newInstance();
 		        		value = customConverter.convert(root, field, path, mappingCollection.dependingOn(), value, object);
 		        	}
 		        }

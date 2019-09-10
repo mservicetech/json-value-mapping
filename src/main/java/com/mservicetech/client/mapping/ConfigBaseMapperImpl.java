@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 public class ConfigBaseMapperImpl extends  BaseMapperImpl implements ClientJsonMapper {
 
 	/** This is used when annotations are not available to hold field details. */
-	private Map<String, Map<String, Map<String, String>>> fieldMappings = null;
+	private Map<String, Map<String, Map<String, String>>> fieldMappings ;
 
 
 	public ConfigBaseMapperImpl(String mappingFilesFolderName) {
