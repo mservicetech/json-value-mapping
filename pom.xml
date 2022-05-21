@@ -26,7 +26,7 @@
         <version.slf4j>1.7.25</version.slf4j>
         <version.jose4j>0.6.3</version.jose4j>
         <version.logback>1.2.3</version.logback>
-        <version.junit>4.12</version.junit>
+        <version.junit>4.13.1</version.junit>
         <version.gson>2.8.9</version.gson>
         <version.snakeyaml>1.25</version.snakeyaml>
         <version.fastscanner>2.18.1</version.fastscanner>
