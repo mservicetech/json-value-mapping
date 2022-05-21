@@ -28,7 +28,7 @@
         <version.logback>1.2.3</version.logback>
         <version.junit>4.12</version.junit>
         <version.gson>2.8.9</version.gson>
-        <version.snakeyaml>1.25</version.snakeyaml>
+        <version.snakeyaml>1.26</version.snakeyaml>
         <version.fastscanner>2.18.1</version.fastscanner>
         <versions.maven-version>2.4</versions.maven-version>
 
